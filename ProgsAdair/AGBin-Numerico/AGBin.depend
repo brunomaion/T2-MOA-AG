@@ -1,0 +1,101 @@
+# depslib dependency file v1.0
+1508345742 source:d:\asc-files\unioeste\moa\progs\agbin\agbin.cpp
+	<iostream>
+	<cmath>
+	"Randomc.h"
+	"AGBin.h"
+	"Utils.h"
+	"Singleton.h"
+
+1128457304 d:\asc-files\unioeste\moa\progs\agbin\randomc.h
+	<math.h>
+	<assert.h>
+	<stdio.h>
+
+1504722064 d:\asc-files\unioeste\moa\progs\agbin\agbin.h
+	<string>
+	<vector>
+	"Randomc.h"
+
+1133964360 d:\asc-files\unioeste\moa\progs\agbin\utils.h
+	<string>
+	<vector>
+	"AGBin.h"
+
+1128537356 d:\asc-files\unioeste\moa\progs\agbin\singleton.h
+	"Randomc.h"
+
+1509536144 source:d:\asc-files\unioeste\moa\progs\agbin\main.cpp
+	<conio.h>
+	<stdlib.h>
+	<ctime>
+	<iostream>
+	<vector>
+	<iomanip>
+	<fstream>
+	"AGBin.h"
+	"Singleton.h"
+	"Utils.h"
+
+1128457270 source:d:\asc-files\unioeste\moa\progs\agbin\mersenne.cpp
+	"Randomc.h"
+
+1128537356 source:d:\asc-files\unioeste\moa\progs\agbin\singleton.cpp
+	<ctime>
+	"Singleton.h"
+
+1130779202 source:d:\asc-files\unioeste\moa\progs\agbin\utils.cpp
+	<string>
+	<math.h>
+	"Utils.h"
+
+1761052684 source:d:\agbin\main.cpp
+	<conio.h>
+	<stdlib.h>
+	<ctime>
+	<iostream>
+	<vector>
+	<iomanip>
+	<fstream>
+	"AGBin.h"
+	"Singleton.h"
+	"Utils.h"
+
+1761054680 d:\agbin\agbin.h
+	<string>
+	<vector>
+	"Randomc.h"
+
+1128457304 d:\agbin\randomc.h
+	<math.h>
+	<assert.h>
+	<stdio.h>
+
+1128537356 d:\agbin\singleton.h
+	"Randomc.h"
+
+1133964360 d:\agbin\utils.h
+	<string>
+	<vector>
+	"AGBin.h"
+
+1128457270 source:d:\agbin\mersenne.cpp
+	"Randomc.h"
+
+1128537356 source:d:\agbin\singleton.cpp
+	<ctime>
+	"Singleton.h"
+
+1130779202 source:d:\agbin\utils.cpp
+	<string>
+	<math.h>
+	"Utils.h"
+
+1761055694 source:d:\agbin\agbin.cpp
+	<iostream>
+	<cmath>
+	"Randomc.h"
+	"AGBin.h"
+	"Utils.h"
+	"Singleton.h"
+

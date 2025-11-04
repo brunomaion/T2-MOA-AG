@@ -1,6 +1,9 @@
-#include <iostream>
+#include "funcao.cpp"
+#include "header.h"
 
 int main() {
-  std::cout << "hello word\n";
+  print();
   return 0;
+
+  Individuo novoIndividuo;
 }
