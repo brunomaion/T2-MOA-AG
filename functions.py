@@ -51,35 +51,35 @@ def criar_grafo_ch150():
     ch150 = Grafo("ch150", vertices, matriz_rotulada)
     return ch150
 
-
-
 def operador_ox(pai1, pai2):
     tamanho = len(pai1)
+    ponto_rand = random.uniform(0.15, 0.4)
+    ponto_inicio = int(tamanho * ponto_rand)
+    ponto_fim = int(tamanho * (1 - ponto_rand))
 
-    p1 = random.randint(0, tamanho - 2)
-    p2 = random.randint(p1 + 1, tamanho - 1)
+    centro_pai1 = pai1[ponto_inicio:ponto_fim]
+    centro_pai2 = pai2[ponto_inicio:ponto_fim]
 
-    filho1 = [None] * tamanho
-    filho2 = [None] * tamanho
-
-    filho1[p1:p2] = pai1[p1:p2]
-    filho2[p1:p2] = pai2[p1:p2]
-
-    pos = p2 % tamanho
-    for i in range(tamanho):
-        item = pai2[(p2 + i) % tamanho]
-        if item not in filho1:
-            filho1[pos] = item
-            pos = (pos + 1) % tamanho
-
-    pos = p2 % tamanho
-    for i in range(tamanho):
-        item = pai1[(p2 + i) % tamanho]
-        if item not in filho2:
-            filho2[pos] = item
-            pos = (pos + 1) % tamanho
-
+    lista1 = pai1[ponto_fim:] + pai1[:ponto_fim]
+    lista2 = pai2[ponto_fim:] + pai2[:ponto_fim]
+    lista1 = [x for x in lista1 if x not in centro_pai2]
+    lista2 = [x for x in lista2 if x not in centro_pai1]
+    filho1 = lista1[ponto_inicio:] + centro_pai2 + lista1[:ponto_inicio]
+    filho2 = lista2[ponto_inicio:] + centro_pai1 + lista2[:ponto_inicio]
     return filho1, filho2
+
+
+
+
+pai1 = [7,4,1,2,5,6,8,3]
+pai2 = [1,2,5,8,7,4,3,6]
+filho1, filho2 = operador_ox(pai1, pai2)
+print("Pai 1:", pai1)
+print("Pai 2:", pai2)
+print("Filho 1:", filho1)
+print("Filho 2:", filho2)
+
+
 
 
 
@@ -137,3 +137,11 @@ def desenhar(pontos, canvas, max_view_x, max_view_y, margem=25):
         x0, y0 = pontos_norm[i]
         x1, y1 = pontos_norm[(i + 1) % n]
         canvas.create_line(x0, y0, x1, y1, fill="blue", width=1)
+
+
+def funcao_objetiva_por_calculo(solucao):
+    soma = 0
+    for i in range(len(solucao)-1):
+        soma += euclidean_distance(solucao[i], solucao[i+1])
+    soma += euclidean_distance(solucao[-1], solucao[0])
+    return soma

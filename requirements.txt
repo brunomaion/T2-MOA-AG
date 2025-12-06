@@ -1,5 +1,5 @@
 pandas
-  numpy
-  ipykernel
-  matplotlib
-  jinja2
+numpy
+ipykernel
+matplotlib
+jinja2

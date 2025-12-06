@@ -44,6 +44,18 @@ def selecionar_indice_roleta(roleta):
         break
   return indice_pai1, indice_pai2
 
+
+def selecao_torneio(pop, k):
+    participantes = random.sample(pop, k)
+    pai1 = min(participantes, key=lambda x: x[1])
+    while True:
+        participantes = random.sample(pop, k)
+        pai2 = min(participantes, key=lambda x: x[1])
+        if pai2 != pai1:
+            break
+    return pai1, pai2
+
+
 def gerar_populacao_inicial(grafo, tamanho_populacao):
     populacao = []
     for _ in range(tamanho_populacao):
@@ -54,7 +66,7 @@ def gerar_populacao_inicial(grafo, tamanho_populacao):
     return populacao
 
 
-def gerar_nova_populacao(populacao, tam_p):
+def gerar_nova_populacao_roleta(populacao, tam_p):
     nova_pop = []
     roleta = cria_roleta(populacao)
 
@@ -68,13 +80,27 @@ def gerar_nova_populacao(populacao, tam_p):
     return nova_pop[:tam_p]
 
 
+def gerar_nova_populacao_torneio(populacao, tam_p, tamanho_torneio=3):
+    nova_pop = []
+    while len(nova_pop) < tam_p:
+        pai1, pai2 = selecao_torneio(populacao, tamanho_torneio)  # retorna [ind, fit], [ind, fit]
+        p1 = pai1[0][:]   # copia do cromossomo do pai1
+        p2 = pai2[0][:]   # copia do cromossomo do pai2
+        f1, f2 = fn.operador_ox(p1, p2)
+        nova_pop.append(f1)
+        nova_pop.append(f2)
+    return nova_pop[:tam_p]
+
+
+
 def mutacao(populacao, grafo, n_mutacoes):
     nova = []
     for sol in populacao:
         mutado = sol[:]  
         for i in range(n_mutacoes):
-          mutado = fn.mutacao_swap(mutado)
-        fit = fn.funcao_objetiva_por_matriz(mutado, grafo.matriz_adj)
+          mutado = fn.mutacao_dois_pontos(mutado)
+        #fit = fn.funcao_objetiva_por_matriz(mutado, grafo.matriz_adj)
+        fit = fn.funcao_objetiva_por_calculo(mutado)
         nova.append([mutado, fit])         
     return nova
 
@@ -85,7 +111,7 @@ def algoritmo_genetico(pop_init, grafo, n_geracoes, tam_pop, elit_pct):
 
     for g in range(n_geracoes):
         elites = elitismo(pop, elit_pct)
-        filhos = gerar_nova_populacao(pop, tam_pop)
+        filhos = gerar_nova_populacao_torneio(pop, tam_pop, tamanho_torneio=3)
         filhos = mutacao(filhos, grafo, n_mutacoes=1)
         pop = (elites + filhos)[:tam_pop]
         print("Geração:", g+1, "Melhor =", min(pop, key=lambda x: x[1])[1])

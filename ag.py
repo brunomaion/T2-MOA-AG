@@ -2,9 +2,9 @@ import tkinter as tk
 import functions as fn
 import algoritmos as alg
 
-n_geracoes = 1000
-tamanho_populacao = 300
-elitismo_porcentagem = 0.02
+n_geracoes = 100
+tamanho_populacao = 100
+elitismo_porcentagem = 0.05
 
 ch150 = fn.criar_grafo_ch150()
 pop_inicial = alg.gerar_populacao_inicial(ch150, tamanho_populacao)
