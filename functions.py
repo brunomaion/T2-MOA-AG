@@ -69,18 +69,13 @@ def operador_ox(pai1, pai2):
     return filho1, filho2
 
 
-
-
-pai1 = [7,4,1,2,5,6,8,3]
-pai2 = [1,2,5,8,7,4,3,6]
-filho1, filho2 = operador_ox(pai1, pai2)
-print("Pai 1:", pai1)
-print("Pai 2:", pai2)
-print("Filho 1:", filho1)
-print("Filho 2:", filho2)
-
-
-
+#pai1 = [7,4,1,2,5,6,8,3]
+#pai2 = [1,2,5,8,7,4,3,6]
+#filho1, filho2 = operador_ox(pai1, pai2)
+#print("Pai 1:", pai1)
+#print("Pai 2:", pai2)
+#print("Filho 1:", filho1)
+#print("Filho 2:", filho2)
 
 
 def funcao_objetiva_por_matriz(solucao, matriz):
