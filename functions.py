@@ -1,4 +1,4 @@
-
+import csv
 from Grafo import Grafo
 import random
 
@@ -17,22 +17,17 @@ def criar_grafo_ch150():
     fname = "arquivos_tsp/ch150.tsp"
     with open(fname, "r", encoding="utf-8") as f:
         texto = f.read()
-
     lines = texto.splitlines()
     lines = lines[6:-1]
-
     vertices=[]
     for line in lines:
         nodo_x = float(line.split()[1])
         nodo_y = float(line.split()[2])
         vertices.append([nodo_x, nodo_y])
-
     n = len(vertices)
     matriz = []
-
     for _ in range(n):
         matriz.append([0] * n)
-
     for i in range(n):
         for j in range(n):
             if i != j:
@@ -50,6 +45,120 @@ def criar_grafo_ch150():
 
     ch150 = Grafo("ch150", vertices, matriz_rotulada)
     return ch150
+
+
+def criar_grafo_berlin52():
+    fname = "arquivos_tsp/berlin52.tsp"
+    with open(fname, "r", encoding="utf-8") as f:
+        texto = f.read()
+    lines = texto.splitlines()
+    lines = lines[6:-1]
+    vertices=[]
+    for line in lines:
+        partes = line.split()
+        _, x, y = partes
+        vertices.append([float(x), float(y)])
+
+    n = len(vertices)
+    matriz = []
+    for _ in range(n):
+        matriz.append([0] * n)
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                matriz[i][j] = euclidean_distance(vertices[i], vertices[j])
+
+    matriz_rotulada = []
+    matriz_rotulada.append([""] + vertices)
+    for i in range(n):
+        matriz_rotulada.append([vertices[i]] + matriz[i])
+    berlin52 = Grafo("berlin52", vertices, matriz_rotulada)
+    return berlin52
+
+def criar_grafo_berlin52():
+    fname = "arquivos_tsp/berlin52.tsp"
+    with open(fname, "r", encoding="utf-8") as f:
+        texto = f.read()
+    lines = texto.splitlines()
+    lines = lines[6:-1]
+    vertices=[]
+    for line in lines:
+        partes = line.split()
+        _, x, y = partes
+        vertices.append([float(x), float(y)])
+
+    n = len(vertices)
+    matriz = []
+    for _ in range(n):
+        matriz.append([0] * n)
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                matriz[i][j] = euclidean_distance(vertices[i], vertices[j])
+
+    matriz_rotulada = []
+    matriz_rotulada.append([""] + vertices)
+    for i in range(n):
+        matriz_rotulada.append([vertices[i]] + matriz[i])
+    berlin52 = Grafo("berlin52", vertices, matriz_rotulada)
+    return berlin52
+
+
+def criar_grafo_berlin52():
+    fname = "arquivos_tsp/berlin52.tsp"
+    with open(fname, "r", encoding="utf-8") as f:
+        texto = f.read()
+    lines = texto.splitlines()
+    lines = lines[6:-1]
+    vertices=[]
+    for line in lines:
+        partes = line.split()
+        _, x, y = partes
+        vertices.append([float(x), float(y)])
+
+    n = len(vertices)
+    matriz = []
+    for _ in range(n):
+        matriz.append([0] * n)
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                matriz[i][j] = euclidean_distance(vertices[i], vertices[j])
+
+    matriz_rotulada = []
+    matriz_rotulada.append([""] + vertices)
+    for i in range(n):
+        matriz_rotulada.append([vertices[i]] + matriz[i])
+    berlin52 = Grafo("berlin52", vertices, matriz_rotulada)
+    return berlin52
+
+def criar_grafo_rd400():
+    fname = "arquivos_tsp/rd400.tsp"
+    with open(fname, "r", encoding="utf-8") as f:
+        texto = f.read()
+    lines = texto.splitlines()
+    lines = lines[6:-1]
+    vertices=[]
+    for line in lines:
+        partes = line.split()
+        _, x, y = partes
+        vertices.append([float(x), float(y)])
+
+    n = len(vertices)
+    matriz = []
+    for _ in range(n):
+        matriz.append([0] * n)
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                matriz[i][j] = euclidean_distance(vertices[i], vertices[j])
+
+    matriz_rotulada = []
+    matriz_rotulada.append([""] + vertices)
+    for i in range(n):
+        matriz_rotulada.append([vertices[i]] + matriz[i])
+    berlin52 = Grafo("rd400", vertices, matriz_rotulada)
+    return berlin52
 
 def operador_ox(pai1, pai2):
     tamanho = len(pai1)
@@ -106,19 +215,14 @@ def mutacao_dois_pontos(solucao):
 
 
 def desenhar(pontos, canvas, max_view_x, max_view_y, margem=25):
-
     xs = [p[0] for p in pontos]
     ys = [p[1] for p in pontos]
-
     xmin, xmax = min(xs), max(xs)
     ymin, ymax = min(ys), max(ys)
-
     largura_original  = xmax - xmin if xmax != xmin else 1
     altura_original   = ymax - ymin if ymax != ymin else 1
-
     escala_x = (max_view_x - 2 * margem) / largura_original
     escala_y = (max_view_y - 2 * margem) / altura_original
-
     pontos_norm = []
     for px, py in pontos:
         x = (px - xmin) * escala_x + margem
@@ -140,3 +244,144 @@ def funcao_objetiva_por_calculo(solucao):
         soma += euclidean_distance(solucao[i], solucao[i+1])
     soma += euclidean_distance(solucao[-1], solucao[0])
     return soma
+
+
+def produto_vetorial(a, b):
+    return a[0] * b[1] - a[1] * b[0]
+
+def cruzamento_delete_cross(p1, p2, p3, p4):
+    d1 = produto_vetorial([p1[0]-p3[0], p1[1]-p3[1]], [p4[0]-p3[0], p4[1]-p3[1]])
+    d2 = produto_vetorial([p2[0]-p3[0], p2[1]-p3[1]], [p4[0]-p3[0], p4[1]-p3[1]])
+    d3 = produto_vetorial([p3[0]-p1[0], p3[1]-p1[1]], [p2[0]-p1[0], p2[1]-p1[1]])
+    d4 = produto_vetorial([p4[0]-p1[0], p4[1]-p1[1]], [p2[0]-p1[0], p2[1]-p1[1]])
+    if (((d1>0 and d2<0) or (d1<0 and d2>0)) and ((d3>0 and d4<0) or (d3<0 and d4<0))):
+      return True
+    else:
+      return False
+
+def operador_delete_cross(solucao):
+  tamanho = len(solucao)
+
+  for i in range(tamanho-3):
+    for j in range(tamanho-1):
+      p1 = solucao[i]
+      p2 = solucao[i+1]
+      p3 = solucao[j]
+      p4 = solucao[j+1]
+      cruzamento = cruzamento_delete_cross(p1, p2, p3, p4)
+      if cruzamento:
+        solucao[i+1:j+1] = reversed(solucao[i+1:j+1])
+  return solucao
+
+def operador_1delete_cross(solucao):
+  tamanho = len(solucao)
+  for i in range(tamanho-3):
+    for j in range(tamanho-1):
+      p1 = solucao[i]
+      p2 = solucao[i+1]
+      p3 = solucao[j]
+      p4 = solucao[j+1]
+      cruzamento = cruzamento_delete_cross(p1, p2, p3, p4)
+      if cruzamento:
+        solucao[i+1:j+1] = reversed(solucao[i+1:j+1])
+        return solucao
+  return solucao
+
+
+def separar_grupos(solucao, n):
+    xs = [p[0] for p in solucao]
+    ys = [p[1] for p in solucao]
+    minx, maxx = min(xs), max(xs)
+    miny, maxy = min(ys), max(ys)
+    intervalo_x = (maxx - minx) / n
+    intervalo_y = (maxy - miny) / n
+    limites = {}
+    for iy in range(n):
+        for ix in range(n):
+            indice = iy * n + ix
+            limites[indice] = {
+                "minx": minx + ix * intervalo_x,
+                "maxx": minx + (ix + 1) * intervalo_x,
+                "miny": miny + iy * intervalo_y,
+                "maxy": miny + (iy + 1) * intervalo_y
+            }
+    grupos = {i: [] for i in range(n * n)}
+    for p in solucao:
+        x, y = p
+        for indice, lim in limites.items():
+            if lim["minx"] <= x <= lim["maxx"] and lim["miny"] <= y <= lim["maxy"]:
+                grupos[indice].append(p)
+                break
+    return grupos
+
+
+def juntar_grupos(grupos):
+    nova_solucao = []
+    for grupo in grupos:
+        for i in grupo:
+            nova_solucao.append(i)
+    return nova_solucao
+
+def duplicados(lista):
+    for i in range(len(lista)):
+        for j in range(i + 1, len(lista)):
+            if lista[i] == lista[j]:
+                return True
+    return False
+
+def juntar_populacoes(pop_grupos):
+    nova_pop = []
+    n_clusters = len(pop_grupos)
+    tamanho_pop = len(pop_grupos[0])
+
+    for i in range(tamanho_pop):
+        novo_individuo = []
+        for c in range(n_clusters):
+            genes = pop_grupos[c][i][0]   # pega a lista de genes
+            novo_individuo.extend(genes)
+
+        fitness = funcao_objetiva_por_calculo(novo_individuo)
+        nova_pop.append([novo_individuo, fitness])
+
+    #print("Tamanho nova pop:", len(nova_pop))
+    return nova_pop
+
+
+
+
+
+
+def criar_csv():
+    with open("resultados.csv", mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow([
+            "Grafo",
+            "Execução",
+            "Algoritmo",
+            "Fit Inicial",
+            "Fit Final",
+            "Tempo Execução (s)",
+            "Ganho Relativo (%)"
+        ])
+
+def adicionar_info_csv(
+    filename,
+    grafo,
+    execucao,
+    algoritmo,
+    fit_inicial,
+    fit_final,
+    tempo_exec,
+    ganho_relativo
+):
+    with open(filename, mode='a', newline='') as file:  # 'a' = append
+        writer = csv.writer(file)
+        writer.writerow([
+            grafo,
+            execucao,
+            algoritmo,
+            fit_inicial,
+            fit_final,
+            tempo_exec,
+            ganho_relativo
+        ])

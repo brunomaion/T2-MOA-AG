@@ -1,7 +1,7 @@
 import random
 import functions as fn
 import copy
-
+import time
 
 
 def elitismo(populacao, elitismo_porcentagem):
@@ -56,12 +56,12 @@ def selecao_torneio(pop, k):
     return pai1, pai2
 
 
-def gerar_populacao_inicial(grafo, tamanho_populacao):
+def gerar_populacao_inicial(pontos, tamanho_populacao):
     populacao = []
     for _ in range(tamanho_populacao):
-        individuo = list(grafo.vertices)
+        individuo = list(pontos)
         random.shuffle(individuo)
-        fit = fn.funcao_objetiva_por_matriz(individuo, grafo.matriz_adj)
+        fit = fn.funcao_objetiva_por_calculo(individuo)
         populacao.append([individuo, fit])
     return populacao
 
@@ -91,35 +91,187 @@ def gerar_nova_populacao_torneio(populacao, tam_p, tamanho_torneio=3):
         nova_pop.append(f2)
     return nova_pop[:tam_p]
 
+def avaliar_pop(populacao):
+    nova = []
+    for sol in populacao:
+        fit = fn.funcao_objetiva_por_calculo(sol)
+        nova.append([sol, fit])
+    return nova
 
-
-def mutacao(populacao, grafo, n_mutacoes):
+def mutacao(populacao, n_mutacoes):
     nova = []
     for sol in populacao:
         mutado = sol[:]  
         for i in range(n_mutacoes):
           mutado = fn.mutacao_dois_pontos(mutado)
-        #fit = fn.funcao_objetiva_por_matriz(mutado, grafo.matriz_adj)
-        fit = fn.funcao_objetiva_por_calculo(mutado)
-        nova.append([mutado, fit])         
+        nova.append(mutado)         
     return nova
 
+def mutacao_deletecross(populacao, n_mutacoes):
+    nova = []
+    for sol in populacao:
+        mutado = sol[:]  
+        for i in range(n_mutacoes):
+          mutado = fn.operador_delete_cross(mutado)
+        nova.append(mutado)         
+    return nova
 
-def algoritmo_genetico(pop_init, grafo, n_geracoes, tam_pop, elit_pct):
+def mutacao_1deletecross(populacao, n_mutacoes):
+    nova = []
+    for sol in populacao:
+        mutado = sol[:]  
+        for i in range(n_mutacoes):
+          mutado = fn.operador_1delete_cross(mutado)
+        nova.append(mutado)         
+    return nova
+
+def algoritmo_genetico(pontos, n_geracoes, tam_pop, elit_pct):
+    pop_init = gerar_populacao_inicial(pontos, tam_pop)
+    tempo_inicio = time.time()
     pop = copy.deepcopy(pop_init)
     melhor_inicial = min(pop, key=lambda x: x[1])
 
     for g in range(n_geracoes):
         elites = elitismo(pop, elit_pct)
         filhos = gerar_nova_populacao_torneio(pop, tam_pop, tamanho_torneio=3)
-        filhos = mutacao(filhos, grafo, n_mutacoes=1)
+        filhos = mutacao(filhos, n_mutacoes=1)
+        filhos = avaliar_pop(filhos)
         pop = (elites + filhos)[:tam_pop]
-        print("Geração:", g+1, "Melhor =", min(pop, key=lambda x: x[1])[1])
+        #print("Geração:", g+1, "Melhor =", min(pop, key=lambda x: x[1])[1])
 
+    tempo_fim = time.time()
+    tempo_execucao = tempo_fim - tempo_inicio
     melhor = min(pop, key=lambda x: x[1])
+    fit_melhor = melhor[1]
+    ganho_relativo = ((melhor_inicial[1] - melhor[1]) / melhor_inicial[1]) * 100
+    #print("\nSolução inicial:", melhor_inicial[1])
+    #print("Melhor solução encontrada:", melhor[1])
+    #print("Tempo de execução (s):", tempo_execucao)
+    #print("Ganho relativo (%):", ganho_relativo)
+    fit_inicial = melhor_inicial[1]
+    melhor_solucao = melhor[0]
+    return fit_inicial, melhor_solucao, fit_melhor, tempo_execucao, ganho_relativo
 
-    print("\nSolução inicial:", melhor_inicial[1])
-    print("Melhor solução encontrada:", melhor[1])
 
-    return melhor[0]
+def ag_deletecross(pontos, n_geracoes, tam_pop, elit_pct):
+    pop_init = gerar_populacao_inicial(pontos, tam_pop)
+    tempo_inicio = time.time()
+    pop = copy.deepcopy(pop_init)
+    melhor_inicial = min(pop, key=lambda x: x[1])
 
+    for g in range(n_geracoes):
+        elites = elitismo(pop, elit_pct)
+        filhos = gerar_nova_populacao_torneio(pop, tam_pop, tamanho_torneio=3)
+        filhos = mutacao_deletecross(filhos, n_mutacoes=1)
+        filhos = avaliar_pop(filhos)
+        pop = (elites + filhos)[:tam_pop]
+        #print("Geração:", g+1, "Melhor =", min(pop, key=lambda x: x[1])[1])
+
+    tempo_fim = time.time()
+    tempo_execucao = tempo_fim - tempo_inicio
+    melhor = min(pop, key=lambda x: x[1])
+    fit_melhor = melhor[1]
+    ganho_relativo = ((melhor_inicial[1] - melhor[1]) / melhor_inicial[1]) * 100
+    fit_inicial = melhor_inicial[1]
+    melhor_solucao = melhor[0]
+    return fit_inicial, melhor_solucao, fit_melhor, tempo_execucao, ganho_relativo
+
+def ag_1deletecross(pop_init, n_geracoes, tam_pop, elit_pct):
+    tempo_inicio = time.time()
+    pop = copy.deepcopy(pop_init)
+    melhor_inicial = min(pop, key=lambda x: x[1])
+
+    n_mutacoes = int(len(pop_init[0][0]) *.05)
+    for g in range(n_geracoes):
+        elites = elitismo(pop, elit_pct)
+        filhos = gerar_nova_populacao_torneio(pop, tam_pop, tamanho_torneio=3)
+        filhos = mutacao_1deletecross(filhos, n_mutacoes=n_mutacoes)
+        #filhos = mutacao(filhos, n_mutacoes=1)
+        filhos = avaliar_pop(filhos)
+        pop = (elites + filhos)[:tam_pop]
+        #print("Geração:", g+1, "Melhor =", min(pop, key=lambda x: x[1])[1])
+
+    tempo_fim = time.time()
+    tempo_execucao = tempo_fim - tempo_inicio
+    melhor_individuo = min(pop, key=lambda x: x[1])
+    melhor_solucao = melhor_individuo[0]
+    fit_melhor = melhor_individuo[1]
+    ganho_relativo = ((melhor_inicial[1] - fit_melhor) / melhor_inicial[1]) * 100
+    fit_inicial = melhor_inicial[1]
+    return fit_inicial, melhor_solucao, fit_melhor, tempo_execucao, ganho_relativo, pop
+
+
+def ag_1deletecross_cluster_solucao(pontos, n_geracoes, tam_pop, elit_pct, n_cluster=2):
+    grafos_cluster = fn.separar_grupos(pontos, n_cluster)
+
+    tempo_inicio = time.time()
+    melhores_finais_grupos = []
+
+    pop_inicial = gerar_populacao_inicial(pontos, tam_pop)
+    melhor_inicial = min(pop_inicial, key=lambda x: x[1])
+    fit_melhor_inicial = melhor_inicial[1]
+
+    for i in grafos_cluster:  
+        grupo = grafos_cluster[i]  
+        pop_inicial = gerar_populacao_inicial(grupo, tam_pop)
+        sol_final = ag_1deletecross(
+            pop_inicial,
+            n_geracoes,
+            tam_pop,
+            elit_pct
+        )
+        melhor_solucao = sol_final[1]
+        #print("Tamanho grupo", len(melhor_solucao))
+        #print("\nCusto grupo", fn.funcao_objetiva_por_calculo(melhor_solucao))
+        melhores_finais_grupos.append(melhor_solucao)
+        
+    melhor_solucao_final = fn.juntar_grupos(melhores_finais_grupos)
+    tempo_fim = time.time()
+    tempo_execucao = tempo_fim - tempo_inicio
+    #print("Tamanho solução final:", len(melhor_solucao_final))
+    #print(len(melhor_solucao_final))
+    #print(fn.duplicados(melhor_solucao_final))
+    fit_melhor = fn.funcao_objetiva_por_calculo(melhor_solucao_final)
+
+    ganho_relativo = ((melhor_inicial[1] - fit_melhor) / melhor_inicial[1]) * 100
+    return fit_melhor_inicial, melhor_solucao_final, fit_melhor, tempo_execucao, ganho_relativo
+ 
+
+def ag_1deletecross_cluster_ag(pontos, n_geracoes, tam_pop, elit_pct, n_cluster=2):
+    grafos_cluster = fn.separar_grupos(pontos, n_cluster)
+    tempo_inicio = time.time()
+    pop_inicial = gerar_populacao_inicial(pontos, tam_pop)
+    melhor_inicial = min(pop_inicial, key=lambda x: x[1])
+    fit_melhor_inicial = melhor_inicial[1]
+
+    pop_grupos = []
+    for i in grafos_cluster:  
+        grupo = grafos_cluster[i]  
+
+        pop_inicial = gerar_populacao_inicial(grupo, tam_pop)
+        sol_final = ag_1deletecross(
+            pop_inicial,
+            n_geracoes,
+            tam_pop,
+            elit_pct
+        )
+        pop_grupos.append(sol_final[5])
+
+    pop_concat = fn.juntar_populacoes(pop_grupos)
+    #for i in pop_concat:
+    #    print("Fit individuo:", i[1])
+    sol_concat = ag_1deletecross(
+            pop_concat,
+            n_geracoes,
+            tam_pop,
+            elit_pct
+            )
+
+    melhor_solucao_final = sol_concat[1]
+    #print(fn.duplicados(melhor_solucao_final))
+    tempo_fim = time.time()
+    tempo_execucao = tempo_fim - tempo_inicio
+    fit_melhor = sol_concat[2]
+
+    ganho_relativo = ((melhor_inicial[1] - fit_melhor) / melhor_inicial[1]) * 100
+    return fit_melhor_inicial, melhor_solucao_final, fit_melhor, tempo_execucao, ganho_relativo

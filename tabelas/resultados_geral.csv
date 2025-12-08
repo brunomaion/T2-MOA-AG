@@ -1,0 +1,13 @@
+Grafo,Algoritmo,Fit Inicial Médio,Fit Melhor Médio,Tempo Execução Médio (s),Ganho Relativo Médio (%)
+berlin52,1DeleteCross,25791.74,9614.50,3.46,62.70
+berlin52,1DC-Solucao-Cluster2x2,26073.29,11553.87,2.83,55.65
+berlin52,1DC-AG-Cluster2x2,26143.10,11662.50,2.93,55.37
+berlin52,Original,25397.81,13811.17,0.88,45.60
+ch150,1DeleteCross,48771.19,19465.29,12.47,60.05
+ch150,1DC-Solucao-Cluster2x2,49091.84,9915.15,13.56,79.80
+ch150,1DC-AG-Cluster2x2,49000.03,9720.36,13.39,80.16
+ch150,Original,48964.95,28570.70,4.26,41.62
+rd400,1DeleteCross,201068.76,81547.36,55.11,59.44
+rd400,1DC-Solucao-Cluster2x2,200381.15,37738.29,29.08,81.17
+rd400,1DC-AG-Cluster2x2,199888.70,37189.12,30.41,81.39
+rd400,Original,200922.50,126426.86,24.68,37.07
