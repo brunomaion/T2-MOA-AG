@@ -13,11 +13,11 @@ viewport.pack(padx=10, pady=10)
 #solucao = [[100, 100], [200, 200], [200, 100], [100, 200]]
 #solucao = [[0, 0], [0, 100], [100, 100], [100, 0]]
 
-ch150 = fn.criar_grafo_ch150()
-iter3 = alg.ag_1deletecross_cluster_ag(
-    ch150.vertices,
-    n_geracoes=500,
-    tam_pop=100,
+grafo = fn.criar_grafo_rd400()
+iter3 = alg.ag_1deletecross_cluster_solucao(
+    grafo.vertices,
+    n_geracoes=20,
+    tam_pop=50,
     elit_pct=0.05,
     n_cluster=2
 )

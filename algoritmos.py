@@ -225,7 +225,7 @@ def ag_1deletecross_cluster_solucao(pontos, n_geracoes, tam_pop, elit_pct, n_clu
         #print("\nCusto grupo", fn.funcao_objetiva_por_calculo(melhor_solucao))
         melhores_finais_grupos.append(melhor_solucao)
         
-    melhor_solucao_final = fn.juntar_grupos(melhores_finais_grupos)
+    melhor_solucao_final = fn.juntar_grupos_por_centro(melhores_finais_grupos)
     tempo_fim = time.time()
     tempo_execucao = tempo_fim - tempo_inicio
     #print("Tamanho solução final:", len(melhor_solucao_final))
@@ -257,7 +257,7 @@ def ag_1deletecross_cluster_ag(pontos, n_geracoes, tam_pop, elit_pct, n_cluster=
         )
         pop_grupos.append(sol_final[5])
 
-    pop_concat = fn.juntar_populacoes(pop_grupos)
+    pop_concat = fn.juntar_populacoes_por_centro(pop_grupos)
     #for i in pop_concat:
     #    print("Fit individuo:", i[1])
     sol_concat = ag_1deletecross(

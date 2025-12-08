@@ -1,6 +1,8 @@
 import csv
 from Grafo import Grafo
 import random
+import matplotlib.pyplot as plt
+import numpy as np
 
 def euclidean_distance(p1, p2):
     return ((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2) ** 0.5
@@ -312,6 +314,10 @@ def separar_grupos(solucao, n):
             if lim["minx"] <= x <= lim["maxx"] and lim["miny"] <= y <= lim["maxy"]:
                 grupos[indice].append(p)
                 break
+
+    salvar_imagem_grupos(grupos, n, filename="grupos2d.png")
+
+
     return grupos
 
 
@@ -329,23 +335,46 @@ def duplicados(lista):
                 return True
     return False
 
-def juntar_populacoes(pop_grupos):
+def juntar_populacoes_por_centro(pop_grupos):
     nova_pop = []
     n_clusters = len(pop_grupos)
     tamanho_pop = len(pop_grupos[0])
 
     for i in range(tamanho_pop):
-        novo_individuo = []
-        for c in range(n_clusters):
-            genes = pop_grupos[c][i][0]   # pega a lista de genes
-            novo_individuo.extend(genes)
+        clusters_individuo = [pop_grupos[c][i][0] for c in range(n_clusters)]
+        individuo_junto = juntar_grupos_por_centro(clusters_individuo)
+        fitness = funcao_objetiva_por_calculo(individuo_junto)
+        nova_pop.append([individuo_junto, fitness])
 
-        fitness = funcao_objetiva_por_calculo(novo_individuo)
-        nova_pop.append([novo_individuo, fitness])
-
-    #print("Tamanho nova pop:", len(nova_pop))
     return nova_pop
 
+
+def indices_mais_proximos(grupo1, grupo2):
+    min_dist = float('inf')
+    idx1_prox = None
+    idx2_prox = None
+
+    for i, p1 in enumerate(grupo1):
+        for j, p2 in enumerate(grupo2):
+            dist = np.linalg.norm(np.array(p1) - np.array(p2))
+            if dist < min_dist:
+                min_dist = dist
+                idx1_prox = i
+                idx2_prox = j
+
+    return idx1_prox, idx2_prox, min_dist
+
+def juntar_2vetores_por_centro(grupo1, grupo2):
+    idx1_prox, idx2_prox, _ = indices_mais_proximos(grupo1, grupo2)
+    novo_grupo = grupo1[:idx1_prox] + grupo2 + grupo1[idx1_prox:] 
+    return novo_grupo
+
+def juntar_grupos_por_centro(grupos):
+    if len(grupos) == 1:
+        return grupos[0]
+    else:
+        novo_grupo = juntar_2vetores_por_centro(grupos[0], grupos[1])
+        return juntar_grupos_por_centro([novo_grupo] + grupos[2:])
 
 
 
@@ -385,3 +414,26 @@ def adicionar_info_csv(
             tempo_exec,
             ganho_relativo
         ])
+
+
+
+
+def salvar_imagem_grupos(grupos, n, filename="grupos2d.png"):
+    plt.figure(figsize=(8, 8))
+    cores = plt.cm.get_cmap("tab20", n*n)
+
+    for idx, pontos in grupos.items():
+        if len(pontos) == 0:
+            continue
+        xs = [p[0] for p in pontos]
+        ys = [p[1] for p in pontos]
+        plt.scatter(xs, ys, color=cores(idx), s=25, label=f"Grupo {idx}")
+
+    plt.title(f"Divisão em {n}x{n} grupos")
+    plt.xlabel("X")
+    plt.ylabel("Y")
+    plt.axis("equal")
+    plt.grid(True, linestyle="--", alpha=0.5)
+    plt.tight_layout()
+    plt.savefig(filename, dpi=300)
+    plt.close()
